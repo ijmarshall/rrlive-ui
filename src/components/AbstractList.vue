@@ -95,7 +95,7 @@ export default {
         // db.ref("review_results/"+id).update({included: state});
     },
     getAbstracts() {
-        let promise = appwrite.database.listDocuments('6022c73e243ba');
+        let promise = appwrite.database.listDocuments('60341a26ca741');
 
         promise.then(function (response) {
             console.log(response); // Success

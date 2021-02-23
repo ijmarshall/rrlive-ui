@@ -40,6 +40,7 @@
             <em>User</em>
           </template>
           <b-dropdown-item href="#">Profile</b-dropdown-item>
+          <b-dropdown-item href="#" v-on:click="login">Login (Github)</b-dropdown-item>
           <b-dropdown-item href="#">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -49,9 +50,16 @@
 </template>
 
 <script>
+import appwrite from '../AppwriteInit.js'
+
 export default {
   name: 'Nav',
   props: {
+  },
+  methods: {
+    login: function() {
+        appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net', 'https://live.robotreviewer.net');
+    }
   }
 }
 </script>
