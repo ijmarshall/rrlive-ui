@@ -69,10 +69,10 @@ export default {
   },
   methods: {
     login: function() {
-        appwrite.account.createOAuth2Session('github', 'http://localhost:8080/', 'http://localhost:8080/').then(response => {
+        appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net:8080/', 'https://live.robotreviewer.net:8080/').then(response => {
           console.log(response);
           this.$store.commit("setSignedInStatus", true);
-          
+
 
         }).catch(error => {
           console.log(error)
