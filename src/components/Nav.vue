@@ -31,8 +31,8 @@
           <template #button-content>
             <em>Select review</em>
           </template>
-          <b-dropdown-item href="#">Review 1</b-dropdown-item>
-          <b-dropdown-item href="#">Review 2</b-dropdown-item>
+          <b-dropdown-item href="#" v-for="review in review_meta" :key="review[1].review_uuid">{{ review[1].title }}</b-dropdown-item>
+          
         </b-nav-item-dropdown>
 
 <b-nav-item-dropdown right>
@@ -54,13 +54,61 @@ import appwrite from '../AppwriteInit.js'
 
 export default {
   name: 'Nav',
-  props: {
+  data() {
+    return {
+      review_meta: [],
+      session_data: [],
+    }
+    
+  },
+  computed: {
+    signedInStatus() {
+      return this.$store.getters.getSignedInStatus;
+    }
+
   },
   methods: {
     login: function() {
-        appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net', 'https://live.robotreviewer.net');
+        appwrite.account.createOAuth2Session('github', 'http://localhost:8080/', 'http://localhost:8080/').then(response => {
+          console.log(response);
+          this.$store.commit("setSignedInStatus", true);
+          
+
+        }).catch(error => {
+          console.log(error)
+        });
+        this.updateReviewMeta();
+    },
+    updateReviewMeta: function () {
+      
+        appwrite.database.listDocuments('60341a2457ca1').then(response => {
+            console.log(response); // Success
+            this.review_meta=Object.entries(response.documents);
+        }).catch(error => {
+            console.log(error); // Success
+        });
+
+
+
+    },    
+    getSessions() {
+
+
+
+        appwrite.account.get().then(response => {
+            console.log(response); // Success
+            // this.review_meta=response.documents;
+        }).catch(error => {
+            console.log(error); // error
+        });
+
     }
-  }
+  },
+  mounted() {
+      
+      this.updateReviewMeta();
+      this.getSessions();
+    }
 }
 </script>
 
