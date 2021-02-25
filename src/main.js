@@ -18,6 +18,8 @@ Vue.config.productionTip = false
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 
+import apw from './AppwriteInit.js';
+let appwrite = apw.appwrite;
 
 const routes = [
   { path: '/about', component: About, name: 'about' },
@@ -35,7 +37,8 @@ const store = new Vuex.Store({
     activeUserName: null,
     activeUserId: null,
     activeReviewId: null,
-    activeReviewTitle: null,    
+    activeReviewTitle: null,
+    abstractsToScreen: [],
   },
   mutations: {
     setSignedInStatus (state, status) {
@@ -45,10 +48,23 @@ const store = new Vuex.Store({
       state.activeUserName = user.name;
       state.activeUserId = user.id;
     },
-    setReview (state, review) {
+    setActiveReview (state, review) {
       state.activeReviewId = review.uuid;
       state.activeReviewTitle = review.title;      
     },
+    setAbstracts (state, abstractList) {
+      state.abstractsToScreen = abstractList;
+
+    },
+    setAbstractStatus(state, {pmid, new_status}) {
+
+      const matchesPmid = (element) => element.pmid == pmid;      
+      let array_idx = state.abstractsToScreen.findIndex(matchesPmid);
+      console.log(pmid)      
+      console.log(state.abstractsToScreen)
+      console.log(array_idx)
+      state.abstractsToScreen[array_idx].included = new_status;
+    }
   },
   getters: {
     getSignedInStatus(state) {
@@ -62,6 +78,55 @@ const store = new Vuex.Store({
       return {uuid: state.activeReviewId,
               title: state.activeReviewTitle}
     },
+    getAbstracts(state) {
+      return state.abstractsToScreen;
+    }
+  },
+  actions: {
+    updateActiveReview({ commit }, review) {
+
+      commit("setActiveReview", review);
+
+      if (review.uuid==null) {
+        commit("setAbstracts", []);  
+      } else {
+
+        let filters = [`review_uuid=${review.uuid}`]
+        console.log(filters)
+        let promise = appwrite.database.listDocuments('6037fcf21a481', filters);
+
+        promise.then(function (response) {
+            console.log(response); // Success
+            
+            commit("setAbstracts", response.documents)
+        }, function (error) {
+            console.log(error); // Failure
+        });
+      }
+
+
+    },
+    changeAbstractStatus({ commit, state }, {pmid, new_status}) {
+      
+      commit('setAbstractStatus', {pmid, new_status}) 
+      const matchesPmid = (element) => element.pmid == pmid;      
+      let array_idx = state.abstractsToScreen.findIndex(matchesPmid);
+      let appwrite_ab_idx = state.abstractsToScreen[array_idx].$id
+
+      let promise = appwrite.database.updateDocument('6037fcf21a481', appwrite_ab_idx, {included: new_status}, [], []);
+      promise.then(function (response) {
+            console.log('did it!!')
+            console.log(response); // Success                  
+        }, function (error) {
+            console.log(error); // Failure
+        });
+      
+
+
+
+    },
+
+
   },
 })
 

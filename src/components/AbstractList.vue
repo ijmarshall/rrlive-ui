@@ -1,15 +1,17 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div class="row" v-if="activeReview.uuid != null">
       <div class="col-sm-10">      
         <hr />
+        
+        
         <br /><br />
-        <alert :message="message" v-if="showMessage"></alert>
-        <br /><br />
+
+        <h1>{{ activeReview.title }} review</h1>
     <span v-if="numberTodo>0">{{ numberTodo }} / {{ numberTotal }} abstracts still to screen</span>
     <span v-else>Abstracts all screened!</span>
-    <div v-for="(abstract, index) in abstracts" :key="abstract.id">
-      {{ index }}
+    <div v-for="(abstract, index) in abstracts" :key="abstract.pmid">
+      Abstract {{ index + 1 }} of {{ numberTotal }}
     <b-card
         :title="abstract.ti"
         :header="abstract.citation"
@@ -28,7 +30,7 @@
         button-variant="outline-primary"
         size="lg"
         name="radio-btn-outline"
-        @change="updateFirebase(abstract.id, abstract.included)"
+        @change="changeAbstractStatus(abstract.pmid, abstract.included)"
         buttons
       ></b-form-radio-group>
     </b-form-group> 
@@ -42,13 +44,15 @@
 
 <script>
 
-import appwrite from "../AppwriteInit.js";
+import apw from '../AppwriteInit.js';
+let appwrite = apw.appwrite;
+
 
 
 export default {
   data() {
     return {
-      abstracts: [],
+
       includeOptions: [
           { text: 'Include', value: 'included' },
           { text: 'Exclude', value: 'excluded' },
@@ -60,12 +64,15 @@ export default {
 
   },
   computed: {
-    reference() {
-      let text = "";
-      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      for (let i = 0; i < 10; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      return text;
+    abstracts() {
+      return this.$store.getters.getAbstracts;
+
+    },
+    signedInStatus() {
+        return this.$store.getters.getSignedInStatus;
+    },
+    activeReview() {
+      return this.$store.getters.getActiveReview;
     },
     numberTodo() {
         return this.abstracts.filter(abstract => (abstract.included=='new')).length;
@@ -78,24 +85,21 @@ export default {
          return item.data.included
       })
     },
+
+
   //   orderedAbs() {
   //       return _.orderBy(this.abstracts, '')
   // }
   },
   methods: {
-    updateFirebase(id, state) {
-        let promise = appwrite.database.updateDocument('[COLLECTION_ID]', '[DOCUMENT_ID]', {}, [], []);
-
-        promise.then(function (response) {
-        console.log(response); // Success
-            }, function (error) {
-        console.log(error, state); // Failure
-        });
-
-        // db.ref("review_results/"+id).update({included: state});
+    changeAbstractStatus(pmid, state) {
+      console.log( {pmid: pmid, new_status: state})
+      this.$store.dispatch("changeAbstractStatus", {pmid: pmid, new_status: state})
+        
     },
     getAbstracts() {
-        let promise = appwrite.database.listDocuments('60341a26ca741');
+        let filters = [`review_uuid=${this.activeReview.uuid}`]
+        let promise = appwrite.database.listDocuments('6037e17461ada', filters);
 
         promise.then(function (response) {
             console.log(response); // Success

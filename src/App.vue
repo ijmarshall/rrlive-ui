@@ -1,17 +1,19 @@
 <template>
   <div id="app">
     <Nav/>
+    <AbstractList/>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import Nav from "./components/Nav.vue";
+import AbstractList from "./components/AbstractList.vue";
 
 
 export default {
   name: 'App',
-  components: {Nav}
+  components: {Nav, AbstractList}
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   
 
-     <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar toggleable="lg" type="dark" variant="info">
     <b-navbar-brand href="#">RobotReviewer LIVE</b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -14,6 +14,9 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
+
+        <b-button href="#" v-if="!signedInStatus" variant="light" v-on:click="signIn">Sign in! (Github)</b-button>
+
         <!-- <b-nav-form>
           <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
           <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
@@ -26,22 +29,23 @@
           <b-dropdown-item href="#">FA</b-dropdown-item>
         </b-nav-item-dropdown> -->
 
-        <b-nav-item-dropdown right>
+        <b-nav-item-dropdown v-if="signedInStatus" right>
           <!-- Using 'button-content' slot -->
           <template #button-content>
             <em>Select review</em>
           </template>
-          <b-dropdown-item href="#" v-for="review in review_meta" :key="review[1].review_uuid">{{ review[1].title }}</b-dropdown-item>
+          <b-dropdown-item href="#" v-for="review in review_meta" :key="review[1].review_uuid" v-on:click="setActiveReview(review[1].review_uuid, review[1].title)">{{ review[1].title }}</b-dropdown-item>
           
         </b-nav-item-dropdown>
 
-<b-nav-item-dropdown right>
+<b-nav-item-dropdown v-if="signedInStatus" right>
+
           <template #button-content>
-            <em>User</em>
+            <em>{{ activeUser.name }} logged in</em>
           </template>
-          <b-dropdown-item href="#">Profile</b-dropdown-item>
-          <b-dropdown-item href="#" v-on:click="login">Login (Github)</b-dropdown-item>
-          <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+          <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
+          
+          <b-dropdown-item href="#" v-on:click="signOut">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -50,7 +54,9 @@
 </template>
 
 <script>
-import appwrite from '../AppwriteInit.js'
+import apw from '../AppwriteInit.js';
+let appwrite = apw.appwrite;
+let dev = apw.dev;
 
 export default {
   name: 'Nav',
@@ -64,14 +70,22 @@ export default {
   computed: {
     signedInStatus() {
       return this.$store.getters.getSignedInStatus;
-    }
+    },
+    activeUser() {
+      return this.$store.getters.getActiveUser;
+    },
+    activeReview() {
+      return this.$store.getters.getActiveReview;
+    },
 
   },
   methods: {
-    login: function() {
-        appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net:8080/', 'https://live.robotreviewer.net:8080/').then(response => {
-          console.log(response);
-          this.$store.commit("setSignedInStatus", true);
+    signIn() {
+        appwrite.account.createSession(dev.email, dev.password).then(response => {
+
+        // appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net:8080/', 'https://live.robotreviewer.net:8080/').then(response => {
+          console.log(response);          
+          this.getSession()
 
 
         }).catch(error => {
@@ -79,7 +93,12 @@ export default {
         });
         this.updateReviewMeta();
     },
-    updateReviewMeta: function () {
+    setActiveReview(uuid, title) {
+
+      this.$store.dispatch("updateActiveReview", {uuid: uuid,
+                                             title: title})
+    },
+    updateReviewMeta() {
       
         appwrite.database.listDocuments('60341a2457ca1').then(response => {
             console.log(response); // Success
@@ -91,23 +110,41 @@ export default {
 
 
     },    
-    getSessions() {
-
-
+    getSession() {
 
         appwrite.account.get().then(response => {
             console.log(response); // Success
+            this.$store.commit("setActiveUser", {id: response.$id,
+                                               name: response.name});          
+            this.$store.commit("setSignedInStatus", true);
+            // this.review_meta=response.documents;
+        }).catch(error => {
+            console.log(error); // error
+            this.$store.commit("setSignedInStatus", false);
+        });
+
+    },
+    signOut() {
+        appwrite.account.deleteSession('current').then(response => {
+            console.log(response); // Success
+            this.$store.commit("setActiveUser", {id: null,
+                                               name: null});          
+            this.$store.commit("setSignedInStatus", false);          
             // this.review_meta=response.documents;
         }).catch(error => {
             console.log(error); // error
         });
 
+
+      
+
     }
   },
+
   mounted() {
-      
+      console.log(appwrite.endpoint);
       this.updateReviewMeta();
-      this.getSessions();
+      this.getSession();
     }
 }
 </script>
