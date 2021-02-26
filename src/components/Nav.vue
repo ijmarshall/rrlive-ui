@@ -56,7 +56,7 @@
 <script>
 import apw from '../AppwriteInit.js';
 let appwrite = apw.appwrite;
-let dev = apw.dev;
+let meta = apw.meta;
 
 export default {
   name: 'Nav',
@@ -81,17 +81,23 @@ export default {
   },
   methods: {
     signIn() {
-        appwrite.account.createSession(dev.email, dev.password).then(response => {
 
-        // appwrite.account.createOAuth2Session('github', 'https://live.robotreviewer.net:8080/', 'https://live.robotreviewer.net:8080/').then(response => {
-          console.log(response);          
-          this.getSession()
+        var promise;
 
+        if (meta.autologin) {
+          promise = appwrite.account.createSession(meta.email, meta.password);
+        } else {
+          promise = appwrite.account.createOAuth2Session('github', meta.url, meta.url);
+        }
 
-        }).catch(error => {
-          console.log(error)
-        });
-        this.updateReviewMeta();
+          promise.then(response => {
+            console.log(response);          
+            this.getSession()
+            this.updateReviewMeta();
+          }).catch(error => {
+            console.log(error)
+          });
+        
     },
     setActiveReview(uuid, title) {
 
