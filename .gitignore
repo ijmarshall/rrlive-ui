@@ -24,4 +24,5 @@ pnpm-debug.log*
 
 # Config files
 /src/AppwriteInit.js
+settings.js
 
