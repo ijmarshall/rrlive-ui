@@ -9,7 +9,7 @@
 
 <script>
 import axios from "axios";
-
+import settings from "../settings.js"
 export default {
   name: "GithubCallback",
   data() {
@@ -31,7 +31,7 @@ export default {
 
       console.log(data);
       axios
-        .post("http://127.0.0.1:8000/auth/authorize", data)
+        .post(`${settings.url}/api/authorize`, data)
         .then(response => {
           console.log(response.data)
           this.$store.commit("setToken",response.data.access_token)

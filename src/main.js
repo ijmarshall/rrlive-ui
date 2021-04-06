@@ -22,6 +22,8 @@ import GithubCallback from "./pages/GithubCallback.vue";
 
 import axios from 'axios';
 
+import settings from './settings.js'
+
 
 
 const routes = [
@@ -112,7 +114,7 @@ const store = new Vuex.Store({
       
       const headers = { Authorization: `Bearer ${state.token}` };
       axios
-        .get("http://127.0.0.1:8000/auth/get_session", { headers: headers })
+        .get(`${settings.url}/api/get_session`, { headers: headers })
         .then(response => {
 
           commit("setActiveUser", {id: response.data.login,
@@ -135,7 +137,7 @@ const store = new Vuex.Store({
 
       const headers = { Authorization: `Bearer ${state.token}` };
       axios
-        .get("http://127.0.0.1:8000/auth/get_reviewlist", { headers: headers })
+        .get(`${settings.url}/api/get_reviewlist`, { headers: headers })
         .then(response => {
             commit('setReviewMeta', response.data.reviews);
         }).catch(error => {
@@ -155,7 +157,7 @@ const store = new Vuex.Store({
 
         const headers = { Authorization: `Bearer ${state.token}` };
         axios
-          .get(`http://127.0.0.1:8000/auth/get_screenlist/${review.revid}`, { headers: headers })
+          .get(`${settings.url}/api/get_screenlist/${review.revid}`, { headers: headers })
           .then(response => {
               commit('setAbstracts', response.data.articles);
           }).catch(error => {
@@ -188,7 +190,7 @@ const store = new Vuex.Store({
 
       const headers = { Authorization: `Bearer ${state.token}` };
       axios
-        .post('http://127.0.0.1:8000/auth/update_abstract/',
+        .post(`${settings.url}/api/update_abstract/`,
           {revid: state.activeReviewId,
            pmid: pmid,
            decision: decision},

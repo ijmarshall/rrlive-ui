@@ -87,7 +87,7 @@ export default {
   methods: {
     signIn() {
         // do stage one of the oauth, and move to the github signin page
-        axios.get(settings.url + '/auth/login')
+        axios.get(settings.url + '/api/login')
           .then(function (response) {
             location.href=response.data.url;
         });        
