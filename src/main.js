@@ -23,8 +23,6 @@ import GithubCallback from "./pages/GithubCallback.vue";
 import axios from 'axios';
 
 
-// import apw from './AppwriteInit.js';
-// let appwrite = apw.appwrite;
 
 const routes = [
   { path: '/about', component: About, name: 'about' },

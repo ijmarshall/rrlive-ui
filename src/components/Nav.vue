@@ -54,11 +54,8 @@
 </template>
 
 <script>
-import apw from '../AppwriteInit.js';
 import axios from 'axios';
-
-// let appwrite = apw.appwrite;
-let meta = apw.meta;
+import settings from '../settings.js';
 
 export default {
   name: 'Nav',
@@ -90,7 +87,7 @@ export default {
   methods: {
     signIn() {
         // do stage one of the oauth, and move to the github signin page
-        axios.get(meta.api + '/auth/login')
+        axios.get(settings.url + '/auth/login')
           .then(function (response) {
             location.href=response.data.url;
         });        

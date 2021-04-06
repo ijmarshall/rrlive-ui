@@ -1,0 +1,3 @@
+// Populate with the correct server URL
+
+export default {url: "http://localhost:8000/"};
