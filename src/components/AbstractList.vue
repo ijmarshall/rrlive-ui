@@ -1,6 +1,8 @@
 <template>
   <div class="container">
-    <div class="row" v-if="activeReview.uuid != null">
+    
+    <div class="row" v-if="activeReview.revid != null">
+
       <div class="col-sm-10">      
         <hr />
         
@@ -15,8 +17,8 @@
     <b-card
         :title="abstract.ti"
         :header="abstract.citation"
-        :header-text-variant="headerText(abstract.included)"
-        :header-bg-variant="headerBack(abstract.included)"
+        :header-text-variant="headerText(abstract.decision)"
+        :header-bg-variant="headerBack(abstract.decision)"
 
         >
     <b-card-text>{{abstract.ab}}</b-card-text>
@@ -24,13 +26,13 @@
       v-slot="{ ariaDescribedby }"
     >
       <b-form-radio-group
-        v-model="abstract.included"
+        v-model="abstract.decision"
         :options="includeOptions"
         :aria-describedby="ariaDescribedby"
         button-variant="outline-primary"
         size="lg"
         name="radio-btn-outline"
-        @change="changeAbstractStatus(abstract.pmid, abstract.included)"
+        @change="changeAbstractStatus(abstract.pmid, abstract.decision)"
         buttons
       ></b-form-radio-group>
     </b-form-group> 
@@ -44,9 +46,6 @@
 
 <script>
 
-import apw from '../AppwriteInit.js';
-let appwrite = apw.appwrite;
-
 
 
 export default {
@@ -54,9 +53,9 @@ export default {
     return {
 
       includeOptions: [
-          { text: 'Include', value: 'included' },
-          { text: 'Exclude', value: 'excluded' },
-          { text: 'reset', value: 'new'}
+          { text: 'Include', value: true },
+          { text: 'Exclude', value: false },
+          { text: 'reset', value: null}
         ],
     };
   },
@@ -66,7 +65,6 @@ export default {
   computed: {
     abstracts() {
       return this.$store.getters.getAbstracts;
-
     },
     signedInStatus() {
         return this.$store.getters.getSignedInStatus;
@@ -75,39 +73,18 @@ export default {
       return this.$store.getters.getActiveReview;
     },
     numberTodo() {
-        return this.abstracts.filter(abstract => (abstract.included=='new')).length;
+        return this.abstracts.filter(abstract => (abstract.decision==null)).length;
     },
     numberTotal() {
         return this.abstracts.length;
     },
-    filteredAbs() {
-      return this.abstracts.filter(item => {
-         return item.data.included
-      })
-    },
 
-
-  //   orderedAbs() {
-  //       return _.orderBy(this.abstracts, '')
-  // }
   },
   methods: {
-    changeAbstractStatus(pmid, state) {
-      console.log( {pmid: pmid, new_status: state})
-      this.$store.dispatch("changeAbstractStatus", {pmid: pmid, new_status: state})
+    changeAbstractStatus(pmid, decision) {
+      console.log( {pmid: pmid, decision: decision})
+      this.$store.dispatch("changeAbstractStatus", {pmid: pmid, decision: decision})
         
-    },
-    getAbstracts() {
-        let filters = [`review_uuid=${this.activeReview.uuid}`]
-        let promise = appwrite.database.listDocuments('6037e17461ada', filters);
-
-        promise.then(function (response) {
-            console.log(response); // Success
-            this.abstracts=response.documents;
-        }, function (error) {
-            console.log(error); // Failure
-        });
-
     },
     headerText(state) {
         if (state=='new') {return "white"} else {return "dark"}
@@ -116,8 +93,8 @@ export default {
         if (state=='new') {return "info"} else {return "light"}
     },
   },
-  created() {
-    this.getAbstracts();
-  }
+  // created() {
+    // this.getAbstracts();
+  // }
 };
 </script>

@@ -34,7 +34,7 @@
           <template #button-content>
             <em>Select review</em>
           </template>
-          <b-dropdown-item href="#" v-for="review in review_meta" :key="review[1].review_uuid" v-on:click="setActiveReview(review[1].review_uuid, review[1].title)">{{ review[1].title }}</b-dropdown-item>
+          <b-dropdown-item href="#" v-for="review in this.$store.getters.getReviewMeta" :key="review.revid" v-on:click="updateActiveReview(review)">{{ review.title }}</b-dropdown-item>
           
         </b-nav-item-dropdown>
 
@@ -45,7 +45,7 @@
           </template>
           <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
           
-          <b-dropdown-item href="#" v-on:click="signOut">Sign Out</b-dropdown-item>
+          <b-dropdown-item href="#" v-on:click="signOut()">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -55,7 +55,9 @@
 
 <script>
 import apw from '../AppwriteInit.js';
-let appwrite = apw.appwrite;
+import axios from 'axios';
+
+// let appwrite = apw.appwrite;
 let meta = apw.meta;
 
 export default {
@@ -71,87 +73,68 @@ export default {
     signedInStatus() {
       return this.$store.getters.getSignedInStatus;
     },
+    reviewMeta() {
+      return this.$store.getters.getReviewMeta;
+    },
     activeUser() {
       return this.$store.getters.getActiveUser;
     },
     activeReview() {
       return this.$store.getters.getActiveReview;
     },
+    token() {
+      return this.$store.getters.getToken;
+    }
 
   },
   methods: {
     signIn() {
-
-        var promise;
-
-        if (meta.autologin) {
-          promise = appwrite.account.createSession(meta.email, meta.password);
-        } else {
-          promise = appwrite.account.createOAuth2Session('github', meta.url, meta.url);
-        }
-
-          promise.then(response => {
-            console.log(response);          
-            this.getSession()
-            this.updateReviewMeta();
-          }).catch(error => {
-            console.log(error)
-          });
-        
+        // do stage one of the oauth, and move to the github signin page
+        axios.get(meta.api + '/auth/login')
+          .then(function (response) {
+            location.href=response.data.url;
+        });        
     },
-    setActiveReview(uuid, title) {
-
-      this.$store.dispatch("updateActiveReview", {uuid: uuid,
-                                             title: title})
+    signOut(){
+      this.$store.dispatch('signOut');
     },
-    updateReviewMeta() {
+    updateActiveReview(review) {
+
+      this.$store.dispatch("updateActiveReview", review)
+    },
+
+  //   getSession() {
+  //     console.log(this.token);
       
-        appwrite.database.listDocuments('60341a2457ca1').then(response => {
-            console.log(response); // Success
-            this.review_meta=Object.entries(response.documents);
-        }).catch(error => {
-            console.log(error); // Success
-        });
+  //     const headers = { Authorization: `Bearer ${this.token}` };
+  //     axios
+  //       .get("http://127.0.0.1:8000/auth/get_session", { headers: headers })
+  //       .then(response => {
+
+  //         this.$store.commit("setActiveUser", {id: response.data.login,
+  //                                              name: response.data.name});  
+  //         this.$store.commit("setSignedInStatus", true);
 
 
+  //       }).catch(error => {
+  //           console.log(error); // error
+  //           this.$store.commit("setSignedInStatus", false);
+  //       });
+  //   },
+  //   signOut() {
+  //           this.$store.commit("setActiveUser", {id: null,
+  //                                              name: null});          
+  //           this.$store.commit("setSignedInStatus", false);  
+  //           this.$store.commit("setToken", null);                      
+  //   }
+  // },
 
-    },    
-    getSession() {
-
-        appwrite.account.get().then(response => {
-            console.log(response); // Success
-            this.$store.commit("setActiveUser", {id: response.$id,
-                                               name: response.name});          
-            this.$store.commit("setSignedInStatus", true);
-            // this.review_meta=response.documents;
-        }).catch(error => {
-            console.log(error); // error
-            this.$store.commit("setSignedInStatus", false);
-        });
-
-    },
-    signOut() {
-        appwrite.account.deleteSession('current').then(response => {
-            console.log(response); // Success
-            this.$store.commit("setActiveUser", {id: null,
-                                               name: null});          
-            this.$store.commit("setSignedInStatus", false);          
-            // this.review_meta=response.documents;
-        }).catch(error => {
-            console.log(error); // error
-        });
-
-
-      
-
-    }
-  },
-
-  mounted() {
-      console.log(appwrite.endpoint);
+  mounted() {      
+      this.getSession();    
       this.updateReviewMeta();
-      this.getSession();
+      
     }
+}
 }
 </script>
 
