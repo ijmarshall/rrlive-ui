@@ -8,12 +8,12 @@
 
 <script>
 import Nav from "./components/Nav.vue";
-import AbstractList from "./components/AbstractList.vue";
+// import AbstractList from "./components/AbstractList.vue";
 
 
 export default {
   name: 'App',
-  components: {Nav, AbstractList}
+  components: {Nav}
 }
 </script>
 
