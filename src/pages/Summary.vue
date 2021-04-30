@@ -2,17 +2,26 @@
   <b-container fluid="xs"  class="shadow-sm p-4 bg-white rounded">
     <h1>RobotReviewer Live Summary</h1>
     <p>RobotReviewer LIVE is an interface to produce semi-automatic, living, systematic reviews</p>
-    <p>This page lists a summary overview</p><br>
-    <h2>Automatic COVAX Summary</h2>
-    <p>INSERT COMPONENT 1 HERE</p>
-    <AbstractList />
-    <p>{{get_summary_covax}}</p>
-    <br>
-    <h2>Automatic Byron Summary</h2>
-    <p>INSERT COMPONENT 2 HERE</p>
-    <div>
-      <test />
-    </div>
+    
+    <b-card title="Live-updating abstract">
+    
+
+    <strong>BACKGROUND</strong>
+    <p></p>
+    <strong>METHODS</strong>
+    <p></p>
+
+    <strong>RESULTS</strong>
+    <p></p>
+    <strong>AUTOMATIC UPDATES</strong>
+    <p>{{ summary }}</p>
+    
+    <p>INSERT NARRATIVE SUMMARY HERE</p>
+
+    <strong>CONCLUSIONS</strong>
+    <p></p>
+  </b-card>
+
 
   </b-container>
 
@@ -20,12 +29,42 @@
 
 
 <script>
-import AbstractList from "../components/AbstractList.vue";
-import test from "../components/test.vue";
+import axios from 'axios';
+import settings from '../settings.js'
+
 
 export default {
-  name: "ScreenAbstracts",
-  components: {AbstractList, test}
+  name: "Summary",
+  components: {},
+  data() {
+    return {
+      summary: ''
+    }
+  },
+  // computed: {
+  //   summary() {
+
+  //     return this.$store.getters.getSummary;
+  //   },
+  methods: {
+    updateSummary() {
+
+      // var summary;
+
+          axios
+          .get(`${settings.url}/api/get_review_update/${this.$route.params.revid}`)
+          .then(response => {
+            this.summary = response.data;              
+          }).catch(error => {
+              console.log(error); // error
+          });
+      // this.summary = summary;
+    
+  },
+  },
+  mounted() {
+    this.updateSummary()
+  }
 };
 
 </script>

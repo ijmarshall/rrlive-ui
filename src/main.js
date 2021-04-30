@@ -18,7 +18,7 @@ Vue.config.productionTip = false
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 import GithubCallback from "./pages/GithubCallback.vue";
-import SummaryComponent from "./pages/Summary.vue";
+import Summary from "./pages/Summary.vue";
 
 
 import axios from 'axios';
@@ -29,8 +29,10 @@ const routes = [
   { path: '/about', component: About, name: 'about' },
   { path: '/', component: ScreenAbstracts, name: 'screenabstracts'},
   { path: "/auth/github", name: "GithubCallback", component: GithubCallback},
-  { path: "/summary", component: SummaryComponent, name: "summary"}
+  { path: "/summary/:revid", component: Summary, name: "summary"}
 ]
+
+
 
 const router = new VueRouter({
   mode: 'history',
@@ -46,12 +48,9 @@ const store = new Vuex.Store({
     activeReviewTitle: null,
     reviewMeta: null,
     abstractsToScreen: [],
-    summary_covax: null,
+    summary: null,
   },
   mutations: {
-    setReviewSummary (state, summary){
-      state.Summary = summary;
-    },
     setSignedInStatus (state, status) {
       state.signedIn = status;
     },
@@ -85,9 +84,6 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    get_Summary_covax(state){
-      return state.summary_covax;
-    },
     getSignedInStatus(state) {
       return state.signedIn;
     },
@@ -191,28 +187,21 @@ const store = new Vuex.Store({
 
 
     },
-    updateSummary({ state, commit }, review) {
+    // updateSummary({ commit }, review) {
 
-      commit("setReviewSummary", review);
+    //   // commit("setReviewSummary", review);
 
-      //if (review.revid==null) {
-      //  commit("setAbstracts", []);
-      //} else {
-
-
-        axios
-          .get(`${settings.url}/api/get_Summary_covax/${review.revid}`)
-          .then(response => {
-              commit('setReviewSummary', response);
-          }).catch(error => {
-              console.log(error); // error
-
-          });
-
-      }
+    //   //if (review.revid==null) {
+    //   //  commit("setAbstracts", []);
+    //   //} else {
 
 
-    },
+ 
+
+      
+
+
+    // },
     changeAbstractStatus({ commit, state }, {pmid, decision}) {
 
       commit('setAbstractStatus', {pmid, decision})
