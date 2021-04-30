@@ -18,23 +18,23 @@ Vue.config.productionTip = false
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 import GithubCallback from "./pages/GithubCallback.vue";
+import SummaryComponent from "./pages/Summary.vue";
 
 
 import axios from 'axios';
 
 import settings from './settings.js'
 
-
-
 const routes = [
   { path: '/about', component: About, name: 'about' },
   { path: '/', component: ScreenAbstracts, name: 'screenabstracts'},
-  { path: "/auth/github", name: "GithubCallback", component: GithubCallback}
+  { path: "/auth/github", name: "GithubCallback", component: GithubCallback},
+  { path: "/summary", component: SummaryComponent, name: "summary"}
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  routes 
+  routes
 })
 
 const store = new Vuex.Store({
@@ -46,8 +46,12 @@ const store = new Vuex.Store({
     activeReviewTitle: null,
     reviewMeta: null,
     abstractsToScreen: [],
+    summary_covax: null,
   },
   mutations: {
+    setReviewSummary (state, summary){
+      state.Summary = summary;
+    },
     setSignedInStatus (state, status) {
       state.signedIn = status;
     },
@@ -64,7 +68,7 @@ const store = new Vuex.Store({
     setActiveReview (state, review) {
       console.log(review)
       state.activeReviewId = review.revid;
-      state.activeReviewTitle = review.title;      
+      state.activeReviewTitle = review.title;
     },
     setAbstracts (state, abstractList) {
       state.abstractsToScreen = abstractList;
@@ -72,18 +76,21 @@ const store = new Vuex.Store({
     },
     setAbstractStatus(state, {pmid, new_status}) {
 
-      const matchesPmid = (element) => element.pmid == pmid;      
+      const matchesPmid = (element) => element.pmid == pmid;
       let array_idx = state.abstractsToScreen.findIndex(matchesPmid);
-      console.log(pmid)      
+      console.log(pmid)
       console.log(state.abstractsToScreen)
       console.log(array_idx)
       state.abstractsToScreen[array_idx].included = new_status;
     }
   },
   getters: {
+    get_Summary_covax(state){
+      return state.summary_covax;
+    },
     getSignedInStatus(state) {
       return state.signedIn;
-    },    
+    },
     getActiveUser(state) {
       return {id: state.activeUserId,
               name: state.activeUserName};
@@ -93,7 +100,7 @@ const store = new Vuex.Store({
     },
     getReviewMeta(state) {
       return state.reviewMeta;
-    },    
+    },
     getActiveReview(state) {
       return {revid: state.activeReviewId,
               title: state.activeReviewTitle}
@@ -105,20 +112,20 @@ const store = new Vuex.Store({
   actions: {
     signOut({ commit }) {
         commit("setActiveUser", {id: null,
-                                               name: null});          
-        commit("setSignedInStatus", false);  
-        commit("setToken", null);                      
+                                               name: null});
+        commit("setSignedInStatus", false);
+        commit("setToken", null);
     },
     signIn({state, commit, dispatch}, ) {
 
-      
+
       const headers = { Authorization: `Bearer ${state.token}` };
       axios
         .get(`${settings.url}/api/get_session`, { headers: headers })
         .then(response => {
 
           commit("setActiveUser", {id: response.data.login,
-                                               name: response.data.name});  
+                                               name: response.data.name});
           commit("setSignedInStatus", true);
 
 
@@ -131,7 +138,7 @@ const store = new Vuex.Store({
     },
 
     updateReviewMeta({ commit, state }) {
-        
+
       console.log('updating review list')
       console.log(state.token);
 
@@ -142,7 +149,7 @@ const store = new Vuex.Store({
             commit('setReviewMeta', response.data.reviews);
         }).catch(error => {
             console.log(error); // error
-          
+
         });
 
 
@@ -152,7 +159,7 @@ const store = new Vuex.Store({
       commit("setActiveReview", review);
 
       if (review.revid==null) {
-        commit("setAbstracts", []);  
+        commit("setAbstracts", []);
       } else {
 
         const headers = { Authorization: `Bearer ${state.token}` };
@@ -162,11 +169,11 @@ const store = new Vuex.Store({
               commit('setAbstracts', response.data.articles);
           }).catch(error => {
               console.log(error); // error
-            
+
           });
 
 
-        
+
 
         // let filters = [`revid=${review.revid}`]
         // console.log(filters)
@@ -175,7 +182,7 @@ const store = new Vuex.Store({
 
         // promise.then(function (response) {
         //     console.log(response); // Success
-            
+
         //     commit("setAbstracts", response.documents)
         // }, function (error) {
         //     console.log(error); // Failure
@@ -183,9 +190,31 @@ const store = new Vuex.Store({
       }
 
 
-    },    
+    },
+    updateSummary({ state, commit }, review) {
+
+      commit("setReviewSummary", review);
+
+      //if (review.revid==null) {
+      //  commit("setAbstracts", []);
+      //} else {
+
+
+        axios
+          .get(`${settings.url}/api/get_Summary_covax/${review.revid}`)
+          .then(response => {
+              commit('setReviewSummary', response);
+          }).catch(error => {
+              console.log(error); // error
+
+          });
+
+      }
+
+
+    },
     changeAbstractStatus({ commit, state }, {pmid, decision}) {
-      
+
       commit('setAbstractStatus', {pmid, decision})
 
       const headers = { Authorization: `Bearer ${state.token}` };
@@ -200,25 +229,25 @@ const store = new Vuex.Store({
             console.log(response);
         }).catch(error => {
             console.log(error); // error
-          
+
       });
 
 
 
 
 
-      // const matchesPmid = (element) => element.pmid == pmid;      
+      // const matchesPmid = (element) => element.pmid == pmid;
       // let array_idx = state.abstractsToScreen.findIndex(matchesPmid);
       // let appwrite_ab_idx = state.abstractsToScreen[array_idx].$id
 
       // let promise = appwrite.database.updateDocument('6037fcf21a481', appwrite_ab_idx, {included: new_status}, [], []);
       // promise.then(function (response) {
       //       console.log('did it!!')
-      //       console.log(response); // Success                  
+      //       console.log(response); // Success
       //   }, function (error) {
       //       console.log(error); // Failure
       //   });
-      
+
 
 
 
@@ -233,5 +262,3 @@ new Vue({
   router,
   store
 }).$mount('#app')
-
-
