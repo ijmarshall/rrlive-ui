@@ -15,7 +15,7 @@
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
 
-        <b-button href="#" v-if="!signedInStatus" variant="light" v-on:click="signIn">Sign in! (Github)</b-button>
+        <b-button href="#" v-if="!signedInStatus" variant="light" v-on:click="signIn()">Sign in! (Github)</b-button>
 
         <!-- <b-nav-form>
           <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
@@ -89,6 +89,7 @@ export default {
         // do stage one of the oauth, and move to the github signin page
         axios.get(settings.url + '/api/login')
           .then(function (response) {
+            console.log(response)
             location.href=response.data.url;
         });        
     },

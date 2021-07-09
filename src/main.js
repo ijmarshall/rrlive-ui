@@ -8,17 +8,21 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import VueFormulate from '@braid/vue-formulate'
+
 Vue.use(Vuex)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.config.productionTip = false
+Vue.use(VueFormulate)
 
 
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 import GithubCallback from "./pages/GithubCallback.vue";
 import Summary from "./pages/Summary.vue";
+import CreateSummary from "./pages/CreateSummary.vue";
 
 
 import axios from 'axios';
@@ -29,7 +33,8 @@ const routes = [
   { path: '/about', component: About, name: 'about' },
   { path: '/', component: ScreenAbstracts, name: 'screenabstracts'},
   { path: "/auth/github", name: "GithubCallback", component: GithubCallback},
-  { path: "/summary/:revid", component: Summary, name: "summary"}
+  { path: "/summary/:revid", component: Summary, name: "summary"},
+  { path: "/createsummary", component: CreateSummary, name: "createsummary"}
 ]
 
 
