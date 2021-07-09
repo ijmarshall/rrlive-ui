@@ -9,13 +9,24 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import VueFormulate from '@braid/vue-formulate'
+import SearchBox from './components/SearchBox.vue'
+
+// register your component with Vue
+Vue.component('Searchbox', SearchBox)
 
 Vue.use(Vuex)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.config.productionTip = false
-Vue.use(VueFormulate)
+Vue.use(VueFormulate, {
+  library: {
+    autocomplete: {
+      classification: 'text',
+      component: 'SearchBox',
+    }
+  }
+})
 
 
 import About from "./pages/About.vue";
