@@ -54,7 +54,9 @@ export default {
     name:"CreateSummaryForm",
     data() {
         return {
-            formValues: {},
+            formValues: {
+                tags: []
+            },
             isLoading: false,
             tag: "",
             tags: [],
@@ -110,10 +112,10 @@ export default {
         },
         reset() {
             this.tags = []
-            this.$formulate.reset('form')
-            if (this.$route.query.q.length > 0) {
+            if (this.$route.query.q && this.$route.query.q.length > 0) {
                 this.$router.push({ name: 'createsummary'});
             }
+            this.$formulate.reset('form')
         },
         update(newTags) {
             this.autocompleteItems = [];
