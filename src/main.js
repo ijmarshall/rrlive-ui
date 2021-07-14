@@ -21,10 +21,13 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 Vue.use(VueFormulate, {
   library: {
-    autocomplete: {
-      classification: 'text',
-      component: 'SearchBox',
-    }
+    searchbox: {
+      classification: 'select',
+      component: 'Searchbox',
+      slotProps: {
+        component: ['context']
+      }
+    },
   }
 })
 

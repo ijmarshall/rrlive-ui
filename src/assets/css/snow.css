@@ -288,8 +288,8 @@
     font-weight: 400;
     line-height: 1.2em;
     margin: 0;
-    border: 1px solid #41b883;
-    background-color: #41b883;
+    border: 1px solid #17a2b8; /* #41b883; */
+    background-color: #17a2b8; /* #41b883; */
     color: #fff;
     min-width: 0;
     width: auto;
@@ -326,7 +326,7 @@
 }
 
 .formulate-input[data-classification=button] button[data-ghost] {
-    color: #41b883;
+    color: #17a2b8; /* #41b883; */
     background-color: transparent;
     border-color: currentColor
 }
