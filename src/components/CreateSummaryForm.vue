@@ -1,13 +1,13 @@
 <template>
     <div class="container">
-        <!-- <div class="form" v-if="signedInStatus"> -->
+    <!-- <div class="form" v-if="signedInStatus"> -->
         <b-container fluid="xs" class="shadow-sm p-4 bg-white rounded">
             <FormulateForm name="form" class="summary-form" v-model="formValues" @submit="sendData" #default="{ isLoading }">
                 <h1>Create New RobotReviewer Live Summary</h1>
                 <p>RobotReviewer LIVE is an interface to produce semi-automatic, living, systematic reviews.
                     <br>Please submit the following information to create a new live summary.</p>
                 <FormulateInput name="name" type="text" label="Name of Live Summary" help="Please enter a name" validation="required" validation-behavior="live" error-behavior="submit" />
-                <FormulateInput type="file" name="document" label="Article Decisions" help="Select a csv (with title, article, and whether we should include or exclude them for summary) to upload." validation="required|mime:text/csv,text/x-csv" upload-behavior="delayed" validation-behavior="live" error-behavior="submit" />
+                <FormulateInput type="file" name="document" label="Article Decisions" help="Select a csv (with PMID, title, article, and 'Include' or 'Exclude' to indicate decision to include or not for summary) to upload." validation="required|mime:text/csv,text/x-csv" upload-behavior="delayed" validation-behavior="live" error-behavior="submit" />
                 <FormulateInput
                     type="searchbox"
                     name="tags"
@@ -33,6 +33,7 @@
                 </code>
             </FormulateForm>
         </b-container>
+    <!-- </div> -->
     </div>
 </template>
 <script>
@@ -63,6 +64,9 @@ export default {
         }
     },
     computed: {
+        signedInStatus() {
+            return this.$store.getters.getSignedInStatus;
+        },
         token() {
             return this.$store.getters.getToken;
         },

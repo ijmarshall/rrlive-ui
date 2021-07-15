@@ -79,8 +79,7 @@ export default {
                 axios
                     .get(url, { headers: { Authorization: `Bearer ${this.token}` } })
                     .then((response) => {
-                        console.log(response)
-                        this.autocompleteItems = response.data.data.map((item) => ({
+                        this.autocompleteItems = response.data.map((item) => ({
                             classes: item.field,
                             text: item.cui_pico_display,
                             cui: item.cui,

@@ -35,7 +35,6 @@
             <em>Select review</em>
           </template>
           <b-dropdown-item href="#" v-for="review in this.$store.getters.getReviewMeta" :key="review.revid" v-on:click="updateActiveReview(review)">{{ review.title }}</b-dropdown-item>
-          
         </b-nav-item-dropdown>
 
 <b-nav-item-dropdown v-if="signedInStatus" right>
