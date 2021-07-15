@@ -24,9 +24,6 @@ Vue.use(VueFormulate, {
     searchbox: {
       classification: 'select',
       component: 'Searchbox',
-      slotProps: {
-        component: ['context']
-      }
     },
   }
 })
