@@ -9,7 +9,10 @@
                 <FormulateInput name="name" type="text" label="Name of Live Summary" help="Please enter a name" validation="required" validation-behavior="live" error-behavior="submit" />
                 <FormulateInput type="file" name="document" label="Article Decisions" help="Select a csv (with pmid, title, abstract, and decision - 'Include' or 'Exclude') to upload." validation="required|mime:text/csv,text/x-csv" upload-behavior="delayed" validation-behavior="live" error-behavior="submit" :uploader="uploadFile" />
                 <FormulateInput type="searchbox" name="tags" label="Tags/Categories" help="Start typing a Population, Intervention, Comparator, or Outcome (PICO) to select tags for filtering." validation="required" error-behavior="submit" validation-behavior="live" />
-                <FormulateInput type="textarea" name="existing_summary" label="Enter existing summary" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review/summary. (optional)" />
+                <FormulateInput type="textarea" name="background" label="Existing BACKGROUND section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's background section. (optional)" />
+                <FormulateInput type="textarea" name="methods" label="Existing METHODS section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's methods section. (optional)" />
+                <FormulateInput type="textarea" name="results" label="Existing RESULTS section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's results section. (optional)" />
+                <FormulateInput type="textarea" name="conclusion" label="Existing CONCLUSION section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's conclusion section. (optional)" />
                 <FormulateErrors />
                 <div class="actions">
                     <FormulateInput type="submit" :disabled="isLoading" :label="isLoading ? 'Loading...' : 'Submit'" />
@@ -21,7 +24,10 @@
                     name: {{ formValues.name }}<br>
                     document: {{ formValues.document }}<br>
                     tags: {{ formValues.tags }}<br>
-                    existing_summary: {{ formValues.existing_summary }}
+                    background: {{ formValues.background }}<br>
+                    methods: {{ formValues.methods }}<br>
+                    results: {{ formValues.results }}<br>
+                    conclusion: {{ formValues.conclusion }}<br>
                 </code>
             </FormulateForm>
         </b-container>
@@ -85,7 +91,7 @@ export default {
             }
             this.$formulate.reset('form')
         },
-        async uploadFile(file, progress, error, options) {
+        async uploadFile(file, progress, error) {
             try {
               const formData = new FormData()
               formData.append('csv_file', file)
@@ -93,7 +99,6 @@ export default {
                 method: 'POST',
                 body: formData
               })
-              console.log(options)
               progress(100) // (native fetch doesn’t support progress updates)
               return await result.json()
             } catch (err) {
