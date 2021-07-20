@@ -99,6 +99,7 @@ export default {
                 if (result.data.success) {
                     this.formErrors = ['There was an error submitting the form.'];
                 }
+                this.$store.dispatch("updateReviewMeta");
             } catch (err) {
                 if (err.response && err.response.data.message) {
                     this.formErrors = err.response.data.message;
