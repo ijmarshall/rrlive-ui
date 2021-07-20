@@ -35,6 +35,9 @@
             <em>Select review</em>
           </template>
           <b-dropdown-item href="#" v-for="review in this.$store.getters.getReviewMeta" :key="review.revid" v-on:click="updateActiveReview(review)">{{ review.title }}</b-dropdown-item>
+          <b-dropdown-item v-on:click="routeToCreateSummary" exact>
+              Create New Live Summary
+          </b-dropdown-item>
         </b-nav-item-dropdown>
 
 <b-nav-item-dropdown v-if="signedInStatus" right>
@@ -96,8 +99,11 @@ export default {
       this.$store.dispatch('signOut');
     },
     updateActiveReview(review) {
-
+      
       this.$store.dispatch("updateActiveReview", review)
+    },
+    routeToCreateSummary() {
+      this.$router.push({ name: 'createsummary' });
     },
 
   //   getSession() {

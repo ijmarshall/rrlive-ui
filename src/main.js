@@ -65,6 +65,7 @@ const store = new Vuex.Store({
     reviewMeta: null,
     abstractsToScreen: [],
     summary: null,
+    token: null,
   },
   mutations: {
     setSignedInStatus (state, status) {
