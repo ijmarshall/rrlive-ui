@@ -9,6 +9,16 @@
                         <br>Please submit the following information to create a new live summary.</p>
                     <FormulateInput name="name" type="text" label="Name of Live Summary" help="Please enter a name" validation="required" validation-behavior="live" error-behavior="submit" />
                     <FormulateInput type="file" name="document" label="Article Decisions" help="Select a csv (with pmid, title, abstract, and decision - 'Include' or 'Exclude') to upload." validation="required|mime:text/csv,text/x-csv" upload-behavior="delayed" validation-behavior="live" error-behavior="submit" :uploader="uploadFile" />
+                    <FormulateInput
+                      type="date"
+                      name="date"
+                      label="Date of Last Manual Search"
+                      placeholder="Sample date placeholder"
+                      help="The date when the last manual search was done/csv was created."
+                      validation="required"
+                      validation-behavior="live"
+                      error-behavior="submit"
+                    />
                     <FormulateInput type="searchbox" name="tags" label="Tags/Categories" help="Start typing a Population, Intervention, Comparator, or Outcome (PICO) to select tags for filtering." validation="required" error-behavior="submit" validation-behavior="live" />
                     <FormulateInput type="textarea" name="background" label="Existing BACKGROUND section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's background section. (optional)" />
                     <FormulateInput type="textarea" name="methods" label="Existing METHODS section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's methods section. (optional)" />

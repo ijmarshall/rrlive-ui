@@ -99,7 +99,9 @@ export default {
       this.$store.dispatch('signOut');
     },
     updateActiveReview(review) {
-      
+      if (this.$route.name !== 'screenabstracts') {
+        this.$router.push({ name: 'screenabstracts' });
+      }
       this.$store.dispatch("updateActiveReview", review)
     },
     routeToCreateSummary() {
