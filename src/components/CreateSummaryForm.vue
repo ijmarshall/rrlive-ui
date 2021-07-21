@@ -30,7 +30,7 @@
                         <FormulateInput type="button" label="Reset" data-ghost @click="reset" />
                     </div>
                     <!-- This is just for debugging and test purposes. The code part can be removed for production. -->
-                    <code class="code code--block">
+                    <!-- <code class="code code--block">
                         INPUT STATE (for development only)<br>
                         name: {{ formValues.name }}<br>
                         document: {{ formValues.document }}<br>
@@ -39,7 +39,7 @@
                         methods: {{ formValues.methods }}<br>
                         results: {{ formValues.results }}<br>
                         conclusion: {{ formValues.conclusion }}<br>
-                    </code>
+                    </code> -->
                 </FormulateForm>
             </b-container>
             </div>
