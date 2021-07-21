@@ -77,7 +77,7 @@ export default {
                     text: item.text,
                     cui: item.cui,
                 }));
-                this.formValues.tags = parsed_tags;
+                this.formValues = {tags: parsed_tags}
             }
         }
     },
