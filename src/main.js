@@ -66,6 +66,7 @@ const store = new Vuex.Store({
     abstractsToScreen: [],
     summary: null,
     token: null,
+    categoryTags: [],
   },
   mutations: {
     setSignedInStatus (state, status) {
@@ -98,6 +99,9 @@ const store = new Vuex.Store({
       console.log(state.abstractsToScreen)
       console.log(array_idx)
       state.abstractsToScreen[array_idx].included = new_status;
+    },
+    setCategoryTags(state, tags) {
+      state.categoryTags = tags;
     }
   },
   getters: {
@@ -120,7 +124,10 @@ const store = new Vuex.Store({
     },
     getAbstracts(state) {
       return state.abstractsToScreen;
-    }
+    },
+    getCategoryTags(state) {
+      return state.categoryTags;
+    },
   },
   actions: {
     signOut({ commit }) {
@@ -203,6 +210,10 @@ const store = new Vuex.Store({
       }
 
 
+    },
+    updateCategoryTags({commit}, tags) {
+      console.log('updating category tags');
+      commit('setCategoryTags', tags);
     },
     // updateSummary({ commit }, review) {
 

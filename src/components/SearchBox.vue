@@ -12,7 +12,6 @@
 <script>
 import VueTagsInput from "@johmun/vue-tags-input";
 import axios from "axios";
-import JSURL from "jsurl";
 import settings from '../settings.js';
 export default {
     name: "SearchBox",
@@ -22,7 +21,6 @@ export default {
     data() {
         return {
             tag: "",
-            tags: [],
             autocompleteItems: [],
             debounce: null,
             loading: false,
@@ -33,41 +31,22 @@ export default {
         token() {
             return this.$store.getters.getToken;
         },
+        tags() {
+            return this.$store.getters.getCategoryTags;
+        }
     },
     watch: {
         tag: "initItems",
-        $route(to) {
-            this.loading = true;
-            let tags = JSURL.parse(to.query.q) || [];
-            if (tags !== this.tags || !tags.length) {
-                this.tags = tags.map((item) => ({
-                    classes: item.field,
-                    text: item.text,
-                    cui: item.cui,
-                }));
-            }
-            this.loading = false;
-        }
-    },
-    beforeMount() {
-        let tags = JSURL.parse(this.$route.query.q);
-        if (tags && tags.length) {
-            this.tags = tags.map((item) => ({
-                classes: item.field,
-                text: item.text,
-                cui: item.cui,
-            }));
-        }
     },
     methods: {
         update(newTags) {
             this.autocompleteItems = [];
             let tags = newTags.map((item) => ({
-                field: item.classes,
+                classes: item.classes,
                 text: item.text,
                 cui: item.cui,
             }));
-            this.$router.push({ name: 'createsummary', query: { q: JSURL.stringify(tags) } });
+            this.$store.dispatch("updateCategoryTags", tags);
         },
         initItems() {
             if (this.tag.length < 2) return;

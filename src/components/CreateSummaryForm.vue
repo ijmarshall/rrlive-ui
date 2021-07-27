@@ -53,7 +53,6 @@
     </div>
 </template>
 <script>
-import JSURL from "jsurl";
 import axios from "axios";
 import settings from '../settings.js';
 export default {
@@ -69,15 +68,11 @@ export default {
         };
     },
     watch: {
-        $route(to) {
-            let tags = JSURL.parse(to.query.q) || [];
-            if (tags !== this.tags || !tags.length) {
-                const parsed_tags = tags.map((item) => ({
-                    classes: item.field,
-                    text: item.text,
-                    cui: item.cui,
-                }));
-                this.formValues = {tags: parsed_tags}
+        '$store.state.categoryTags': {
+            immediate: true,
+            handler() {
+               // update locally relevant data
+               this.formValues.tags = this.$store.getters.getCategoryTags;
             }
         }
     },
@@ -92,11 +87,13 @@ export default {
     methods: {
         async sendData(data) {
             try {
+                console.log(data)
                 const url = `${settings.url}/api/create_live_summary`;
                 const headers = { Authorization: `Bearer ${this.token}` };
                 const result = await axios.post(url, data, { headers: headers});
+                
                 this.isSubmitted = result.data.success;
-                if (result.data.success) {
+                if (!result.data.success) {
                     this.formErrors = ['There was an error submitting the form.'];
                 }
                 this.$store.dispatch("updateReviewMeta");
@@ -109,16 +106,14 @@ export default {
             }
         },
         reset() {
-            if (this.$route.query.q && this.$route.query.q.length > 0) {
-                this.$router.replace({'query': null});
-            }
+            this.$store.dispatch("updateCategoryTags", [])
             this.$formulate.reset('form');
         },
         newForm() {
             this.isLoading = false;
             this.formErrors = [];
+            this.$store.dispatch("updateCategoryTags", [])
             this.isSubmitted = false;
-            this.$router.replace({'query': null});
         },
         async uploadFile(file, progress, error) {
             try {
