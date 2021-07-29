@@ -15,7 +15,7 @@
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
 
-        <b-button href="#" v-if="!signedInStatus" variant="light" v-on:click="signIn">Sign in! (Github)</b-button>
+        <b-button href="#" v-if="!signedInStatus" variant="light" v-on:click="signIn()">Sign in! (Github)</b-button>
 
         <!-- <b-nav-form>
           <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
@@ -35,7 +35,9 @@
             <em>Select review</em>
           </template>
           <b-dropdown-item href="#" v-for="review in this.$store.getters.getReviewMeta" :key="review.revid" v-on:click="updateActiveReview(review)">{{ review.title }}</b-dropdown-item>
-          
+          <b-dropdown-item v-on:click="routeToCreateSummary" exact>
+              Create New Live Summary
+          </b-dropdown-item>
         </b-nav-item-dropdown>
 
 <b-nav-item-dropdown v-if="signedInStatus" right>
@@ -89,6 +91,7 @@ export default {
         // do stage one of the oauth, and move to the github signin page
         axios.get(settings.url + '/api/login')
           .then(function (response) {
+            console.log(response)
             location.href=response.data.url;
         });        
     },
@@ -96,8 +99,13 @@ export default {
       this.$store.dispatch('signOut');
     },
     updateActiveReview(review) {
-
+      if (this.$route.name !== 'screenabstracts') {
+        this.$router.push({ name: 'screenabstracts' });
+      }
       this.$store.dispatch("updateActiveReview", review)
+    },
+    routeToCreateSummary() {
+      this.$router.push({ name: 'createsummary' });
     },
 
   //   getSession() {

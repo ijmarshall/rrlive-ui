@@ -8,17 +8,32 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import VueFormulate from '@braid/vue-formulate'
+import SearchBox from './components/SearchBox.vue'
+
+// register your component with Vue
+Vue.component('Searchbox', SearchBox)
+
 Vue.use(Vuex)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.config.productionTip = false
+Vue.use(VueFormulate, {
+  library: {
+    searchbox: {
+      classification: 'select',
+      component: 'Searchbox',
+    },
+  }
+})
 
 
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 import GithubCallback from "./pages/GithubCallback.vue";
 import Summary from "./pages/Summary.vue";
+import CreateSummary from "./pages/CreateSummary.vue";
 
 
 import axios from 'axios';
@@ -29,7 +44,8 @@ const routes = [
   { path: '/about', component: About, name: 'about' },
   { path: '/', component: ScreenAbstracts, name: 'screenabstracts'},
   { path: "/auth/github", name: "GithubCallback", component: GithubCallback},
-  { path: "/summary/:revid", component: Summary, name: "summary"}
+  { path: "/summary/:revid", component: Summary, name: "summary"},
+  { path: "/createsummary", component: CreateSummary, name: "createsummary"}
 ]
 
 
@@ -49,6 +65,8 @@ const store = new Vuex.Store({
     reviewMeta: null,
     abstractsToScreen: [],
     summary: null,
+    token: null,
+    categoryTags: [],
   },
   mutations: {
     setSignedInStatus (state, status) {
@@ -81,6 +99,9 @@ const store = new Vuex.Store({
       console.log(state.abstractsToScreen)
       console.log(array_idx)
       state.abstractsToScreen[array_idx].included = new_status;
+    },
+    setCategoryTags(state, tags) {
+      state.categoryTags = tags;
     }
   },
   getters: {
@@ -103,7 +124,10 @@ const store = new Vuex.Store({
     },
     getAbstracts(state) {
       return state.abstractsToScreen;
-    }
+    },
+    getCategoryTags(state) {
+      return state.categoryTags;
+    },
   },
   actions: {
     signOut({ commit }) {
@@ -186,6 +210,10 @@ const store = new Vuex.Store({
       }
 
 
+    },
+    updateCategoryTags({commit}, tags) {
+      console.log('updating category tags');
+      commit('setCategoryTags', tags);
     },
     // updateSummary({ commit }, review) {
 
