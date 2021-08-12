@@ -28,7 +28,7 @@ Vue.use(VueFormulate, {
   }
 })
 
-
+import Landing from "./pages/Landing.vue";
 import About from "./pages/About.vue";
 import ScreenAbstracts from "./pages/ScreenAbstracts.vue";
 import GithubCallback from "./pages/GithubCallback.vue";
@@ -41,8 +41,9 @@ import axios from 'axios';
 import settings from './settings.js'
 
 const routes = [
+  { path: '/', component: Landing, name: 'landing' },
   { path: '/about', component: About, name: 'about' },
-  { path: '/', component: ScreenAbstracts, name: 'screenabstracts'},
+  { path: '/screenabstracts', component: ScreenAbstracts, name: 'screenabstracts'},
   { path: "/auth/github", name: "GithubCallback", component: GithubCallback},
   { path: "/summary/:revid", component: Summary, name: "summary"},
   { path: "/createsummary", component: CreateSummary, name: "createsummary"}
