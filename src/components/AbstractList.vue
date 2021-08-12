@@ -1,6 +1,8 @@
 <template>
-  <div class="container">
-    
+  <div v-if="isLoading">
+        <LoadingSpinner />
+    </div>
+  <div v-else class="container">
     <div class="row" v-if="activeReview.revid != null">
 
       <div class="col-sm-10">      
@@ -45,8 +47,7 @@
 </template>
 
 <script>
-
-
+import LoadingSpinner from "../components/LoadingSpinner.vue";
 
 export default {
   data() {
@@ -60,7 +61,7 @@ export default {
     };
   },
   components: {
-
+    LoadingSpinner,
   },
   computed: {
     abstracts() {
@@ -78,7 +79,9 @@ export default {
     numberTotal() {
         return this.abstracts.length;
     },
-
+    isLoading() {
+      return this.$store.getters.getIsLoading;
+    },
   },
   methods: {
     changeAbstractStatus(pmid, decision) {
