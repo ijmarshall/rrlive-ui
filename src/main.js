@@ -63,7 +63,6 @@ const store = new Vuex.Store({
     state: {
         signedIn: false,
         activeUserName: null,
-        activeUserDBId: null,
         activeUserId: null,
         activeUserEmail: null,
         activeReviewId: null,
@@ -82,7 +81,6 @@ const store = new Vuex.Store({
         setActiveUser(state, user) {
             state.activeUserName = user.name;
             state.activeUserId = user.login;
-            state.activeUserDBId = user.id;
             state.activeUserEmail = user.email;
         },
         setToken(state, token) {
@@ -122,7 +120,6 @@ const store = new Vuex.Store({
         },
         getActiveUser(state) {
             return {
-                id: state.activeUserDBId,
                 login: state.activeUserId,
                 name: state.activeUserName,
                 email: state.activeUserEmail
@@ -153,7 +150,6 @@ const store = new Vuex.Store({
     actions: {
         signOut({ commit }) {
             commit("setActiveUser", {
-                id: null,
                 name: null,
                 login: null,
                 email: null
@@ -168,9 +164,8 @@ const store = new Vuex.Store({
                 .then(response => {
 
                     commit("setActiveUser", {
-                        id: response.data.id,
-                        name: response.data.name,
                         login: response.data.login,
+                        name: response.data.name,
                         email: response.data.email
                     });
                     commit("setSignedInStatus", true);

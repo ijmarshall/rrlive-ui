@@ -163,7 +163,6 @@ export default {
         async submitAccountUpdate(data) {
             try {
                 console.log(data)
-                data.id = this.activeUser.id;
                 const url = `${settings.url}/api/update_user_information`;
                 const headers = { Authorization: `Bearer ${this.token}` };
                 const result = await axios.post(url, data, { headers: headers });
