@@ -33,7 +33,9 @@
             <b-spinner style="width: 3rem; height: 3rem; margin-right: 5px; margin-top: -25px;" variant="warning" label="Spinning"></b-spinner>
             <b-spinner style="width: 3rem; height: 3rem; margin-right: 0; margin-top: -25px;" variant="success" label="Spinning"></b-spinner>
         </div>
-        <div class="text-center">olympic rings spinner I created for fun!</div>
+        <div class="text-center mt-3">
+            <h5>Loading...</h5>
+        </div>
     </div>
 </template>
 <script>

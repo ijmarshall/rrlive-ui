@@ -20,10 +20,10 @@
                       error-behavior="submit"
                     />
                     <FormulateInput type="searchbox" name="tags" label="Tags/Categories" help="Start typing a Population, Intervention, Comparator, or Outcome (PICO) to select tags for filtering." validation="required" error-behavior="submit" validation-behavior="live" />
-                    <FormulateInput type="textarea" name="background" label="Existing BACKGROUND section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's background section. (optional)" />
-                    <FormulateInput type="textarea" name="methods" label="Existing METHODS section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's methods section. (optional)" />
-                    <FormulateInput type="textarea" name="results" label="Existing RESULTS section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's results section. (optional)" />
-                    <FormulateInput type="textarea" name="conclusion" label="Existing CONCLUSION section" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's conclusion section. (optional)" />
+                    <FormulateInput type="textarea" name="background" label="Existing BACKGROUND section (optional)" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's background section." />
+                    <FormulateInput type="textarea" name="methods" label="Existing METHODS section (optional)" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's methods section." />
+                    <FormulateInput type="textarea" name="results" label="Existing RESULTS section (optional)" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's results section." />
+                    <FormulateInput type="textarea" name="conclusion" label="Existing CONCLUSION section (optional)" validation="optional" validation-behavior="live" error-behavior="submit" help="Please enter an existing systemic review's conclusion section." />
                     <FormulateErrors />
                     <div class="actions">
                         <FormulateInput type="submit" :disabled="isLoading" :label="isLoading ? 'Loading...' : 'Submit'" />

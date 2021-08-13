@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
 
+import 'bootstrap/js/dist/modal'; // individually imported plugin for MODAL
+
 import VueFormulate from '@braid/vue-formulate'
 import SearchBox from './components/SearchBox.vue'
 
@@ -61,7 +63,9 @@ const store = new Vuex.Store({
     state: {
         signedIn: false,
         activeUserName: null,
+        activeUserDBId: null,
         activeUserId: null,
+        activeUserEmail: null,
         activeReviewId: null,
         activeReviewTitle: null,
         reviewMeta: null,
@@ -77,7 +81,9 @@ const store = new Vuex.Store({
         },
         setActiveUser(state, user) {
             state.activeUserName = user.name;
-            state.activeUserId = user.id;
+            state.activeUserId = user.login;
+            state.activeUserDBId = user.id;
+            state.activeUserEmail = user.email;
         },
         setToken(state, token) {
             state.token = token;
@@ -116,8 +122,10 @@ const store = new Vuex.Store({
         },
         getActiveUser(state) {
             return {
-                id: state.activeUserId,
-                name: state.activeUserName
+                id: state.activeUserDBId,
+                login: state.activeUserId,
+                name: state.activeUserName,
+                email: state.activeUserEmail
             };
         },
         getToken(state) {
@@ -146,7 +154,9 @@ const store = new Vuex.Store({
         signOut({ commit }) {
             commit("setActiveUser", {
                 id: null,
-                name: null
+                name: null,
+                login: null,
+                email: null
             });
             commit("setSignedInStatus", false);
             commit("setToken", null);
@@ -158,8 +168,10 @@ const store = new Vuex.Store({
                 .then(response => {
 
                     commit("setActiveUser", {
-                        id: response.data.login,
-                        name: response.data.name
+                        id: response.data.id,
+                        name: response.data.name,
+                        login: response.data.login,
+                        email: response.data.email
                     });
                     commit("setSignedInStatus", true);
 
@@ -175,7 +187,6 @@ const store = new Vuex.Store({
         updateReviewMeta({ commit, state }) {
 
             console.log('updating review list')
-            console.log(state.token);
             commit('setIsLoading', true);
             const headers = { Authorization: `Bearer ${state.token}` };
             axios
