@@ -1,6 +1,6 @@
 <template>
     <!-- SPINNER FOR LOADING -->
-    <div v-if="isLoading">
+    <div v-if="isPageLoading">
         <LoadingSpinner />
     </div>
     <!-- CONTENT -->
@@ -34,8 +34,8 @@
                             <b-icon icon="pencil-fill" aria-hidden="true"></b-icon> Update Account Information
                         </b-button>
                         <b-modal v-model="show" title="Update Account Information" hide-footer>
-                            <FormulateForm @submit="submitAccountUpdate" class="update-account-form" v-model="formValues" invalid-message="Not all fields were filled out properly" :form-errors="formErrors">
-                                <FormulateInput label="Github username (readonly)" :value="activeUser.login" placeholder="Enter username" help="This field is not editable." readonly />
+                            <FormulateForm name="form" @submit="submitAccountUpdate" class="update-account-form" v-model="formValues" invalid-message="Not all fields were filled out properly" :form-errors="formErrors" #default="{ isLoading }">
+                                <FormulateInput label="Github username (readonly)" name="login" :value="activeUser.login" placeholder="Enter username" help="This field is not editable." readonly />
                                 <FormulateInput label="Name" name="name" :value="activeUser.name" placeholder="Enter your name" />
                                 <FormulateInput label="Email" type="email" name="email" validation="email" placeholder="Enter your email" :value="activeUser.email" />
                                 <!-- Form errors will show here -->
@@ -44,7 +44,7 @@
                                     <b-button class="mr-2" variant="secondary" @click="show=false">
                                         Cancel
                                     </b-button>
-                                    <FormulateInput type="submit">Submit</FormulateInput>
+                                    <FormulateInput type="submit" :disabled="isLoading" :label="isLoading ? 'Loading...' : 'Submit'" />
                                 </div>
                             </FormulateForm>
                         </b-modal>
@@ -126,7 +126,8 @@ export default {
             formValues: {
                 name: '',
                 email: '',
-            }
+            },
+            isLoading: false,
         }
     },
     components: { LoadingSpinner, },
@@ -147,11 +148,14 @@ export default {
         numberOfReviewMeta() {
             return this.reviewMeta ? this.reviewMeta.length : 0;
         },
-        isLoading() {
+        isPageLoading() {
             return this.$store.getters.getIsLoading;
         },
         activeUser() {
             return this.$store.getters.getActiveUser;
+        },
+        token() {
+            return this.$store.getters.getToken;
         },
     },
     methods: {
@@ -171,7 +175,8 @@ export default {
                 if (!result.data.success) {
                     this.formErrors = ['There was an error submitting the form.'];
                 }
-                this.$store.dispatch("updateReviewMeta");
+                this.show=false;
+                this.$store.commit("setActiveUser", result.data.user);
             } catch (err) {
                 if (err.response && err.response.data.message) {
                     this.formErrors = err.response.data.message;
