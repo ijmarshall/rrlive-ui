@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="m-2">
     <div v-if="!user">Authorizing ...</div>
     <div v-else>
       Logged in ...
