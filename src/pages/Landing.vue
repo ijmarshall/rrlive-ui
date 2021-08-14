@@ -24,8 +24,8 @@
                         <p>Looks like we don't have your email address yet! Please provide your email by updating your account information.<br>We will only email you when new articles are available for screening.</p>
                     </b-alert>
                     <ul class="list-group">
-                        <li class="list-group-item"><strong>Name</strong>: {{activeUser.name}}</li>
                         <li class="list-group-item"><strong>Github username</strong>: {{activeUser.login}}</li>
+                        <li class="list-group-item"><strong>Name</strong>: {{activeUser.name}}</li>
                         <li class="list-group-item"><strong>Email</strong>: {{activeUser.email}}</li>
                     </ul>
                     <!-- Button trigger modal -->
