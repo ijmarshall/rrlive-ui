@@ -12,18 +12,16 @@
             <strong>AUTOMATIC UPDATES</strong>
             <p>{{summary.automated_narrative_summary}}</p>
 
-            <h6>Diff</h6>
-            <p>Using diff-match-patch library</p>
-            <div id="outputdiv">
+            <h6>Old Review vs Updated Review</h6>
+            <div class="m-4" id="outputdiv">
             </div>
 
-            <div class="mt-4">
-                <p>Using v-code-diff which uses jsdiff and diff2html</p>
+            <!-- <div class="mt-4">
                 <code-diff
                   :old-string="summary.conclusion"
                   :new-string="summary.automated_narrative_summary"/>
-            </div>
-            
+            </div> -->
+
             <strong>CONCLUSIONS</strong>
             <p>{{summary.conclusion}}</p>
         </b-card>
@@ -33,12 +31,12 @@
 import axios from 'axios';
 import settings from '../settings.js'
 import DiffMatchPatch from 'diff-match-patch';
-import {CodeDiff} from 'v-code-diff'
+// import {CodeDiff} from 'v-code-diff'
 
 export default {
     name: "Summary",
     components: {
-        CodeDiff
+        //CodeDiff
     },
     data() {
         return {
@@ -55,10 +53,6 @@ export default {
         token() {
             return this.$store.getters.getToken;
         },
-        // summary() {
-
-        // return this.$store.getters.getSummary;
-        // },
     },
     methods: {
         updateSummary() {
