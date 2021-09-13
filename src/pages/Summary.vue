@@ -13,7 +13,7 @@
             <p>{{summary.automated_narrative_summary}}</p>
 
             <h6>Old Review vs Updated Review</h6>
-            <div class="m-4" id="outputdiv">
+            <div class="mt-4 mb-4" id="outputdiv">
             </div>
 
             <!-- <div class="mt-4">
