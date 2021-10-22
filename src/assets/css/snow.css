@@ -347,8 +347,9 @@
 }
 
 .formulate-input[data-classification=button] button:active {
-    background-color: #64c89b;
-    border-color: #64c89b
+    background-color: #138496; /* #64c89b; */
+    border-color: #117a8b; /* #64c89b */
+    color: #fff;
 }
 
 .formulate-input[data-classification=select] .formulate-input-element {
