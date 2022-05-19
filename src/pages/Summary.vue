@@ -12,7 +12,30 @@
             <strong>AUTOMATIC UPDATES</strong>
             <p>{{summary.automated_narrative_summary}}</p>
 
-            <h6>Old Review vs Updated Review</h6>
+            <h6>Original Conclusion vs Updated Conclusion</h6>
+            <div class="mt-4 mb-4">
+                <FormulateForm
+                    v-model="sliderValue"
+                    @submit="updateSummaryByDiff"
+                >
+                    <FormulateInput
+                        label="How many edits would you like the updated conclusion to have?"
+                        type="range"
+                        name="range"
+                        min="1"
+                        max="10"
+                        value="1"
+                        validation="min:0|max:10"
+                        error-behavior="live"
+                        :show-value="true"
+                    />
+                    <!-- <FormulateInput
+                        type="submit"
+                        :label="isLoading ? 'Loading...' : 'Update'"
+                        :disabled="isLoading"
+                    /> -->
+                </FormulateForm>
+            </div>
             <div class="mt-4 mb-4" id="outputdiv">
             </div>
 
@@ -47,6 +70,10 @@ export default {
                 conclusion: "",
                 automated_narrative_summary: "",
             }, // summary object with all different sections
+            sliderValue: {
+                range: "1"
+            },
+            isLoading: false,
         }
     },
     computed: {
@@ -55,9 +82,7 @@ export default {
         },
     },
     methods: {
-        updateSummary() {
-
-            // var summary;
+        getSummary() {
             const headers = { Authorization: `Bearer ${this.token}` };
             axios
                 .get(`${settings.url}/api/get_live_review_summary/${this.$route.params.revid}`, { headers: headers })
@@ -65,15 +90,46 @@ export default {
                     this.summary = response.data;
                     const dmp = new DiffMatchPatch();
                     const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
+                    dmp.diff_cleanupSemantic(diff);
+                    // Count non-copy diff
+                    const count = diff.filter(edit => {
+                        if (edit[0] != 0) {
+                            return true;
+                        }
+                        return false;
+                    }).length;
+                    this.sliderValue.range = count;
+                    
                     var ds = dmp.diff_prettyHtml(diff);
                     document.getElementById('outputdiv').innerHTML = ds;
                 }).catch(error => {
                     console.log(error); // error
                 });
         },
+        updateSummaryByDiff() {
+            this.isLoading = true;
+            new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+                this.isLoading = false;
+            });
+            // TODO: NEED TO FIGURE OUT HOW TO MAKE THIS WORK ONE AT A TIME
+            // const headers = { Authorization: `Bearer ${this.token}` };
+            // axios
+            //     .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}`, { headers: headers })
+            //     .then(response => {
+            //         const updated_summary = response.data.updated_summary;
+            //         this.summary.automated_narrative_summary = updated_summary;
+            //         const dmp = new DiffMatchPatch();
+            //         const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
+            //         this.sliderValue.range = this.sliderValue.range + 1;
+            //         var ds = dmp.diff_prettyHtml(diff);
+            //         document.getElementById('outputdiv').innerHTML = ds;
+            //     }).catch(error => {
+            //         console.log(error); // error
+            //     });
+        },
     },
-    mounted() {
-        this.updateSummary()
+    created() {
+        this.getSummary()
     }
 };
 </script>
