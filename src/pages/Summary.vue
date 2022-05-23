@@ -11,7 +11,14 @@
             <p>{{summary.results}}</p>
             <strong>AUTOMATIC UPDATES</strong>
             <p>{{summary.automated_narrative_summary}}</p>
+            <!-- <div class="mt-4">
+                <code-diff
+                  :old-string="summary.conclusion"
+                  :new-string="summary.automated_narrative_summary"/>
+            </div> -->
 
+            <strong>CONCLUSIONS</strong>
+            <p>{{summary.conclusion}}</p>
             <h6>Original Conclusion vs Updated Conclusion</h6>
             <div class="mt-4 mb-4">
                 <FormulateForm
@@ -29,24 +36,15 @@
                         error-behavior="live"
                         :show-value="true"
                     />
-                    <!-- <FormulateInput
+                    <FormulateInput
                         type="submit"
                         :label="isLoading ? 'Loading...' : 'Update'"
                         :disabled="isLoading"
-                    /> -->
+                    />
                 </FormulateForm>
             </div>
             <div class="mt-4 mb-4" id="outputdiv">
             </div>
-
-            <!-- <div class="mt-4">
-                <code-diff
-                  :old-string="summary.conclusion"
-                  :new-string="summary.automated_narrative_summary"/>
-            </div> -->
-
-            <strong>CONCLUSIONS</strong>
-            <p>{{summary.conclusion}}</p>
         </b-card>
     </b-container>
 </template>
@@ -108,24 +106,27 @@ export default {
         },
         updateSummaryByDiff() {
             this.isLoading = true;
-            new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-                this.isLoading = false;
-            });
+            // new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+            //     this.isLoading = false;
+            // });
             // TODO: NEED TO FIGURE OUT HOW TO MAKE THIS WORK ONE AT A TIME
-            // const headers = { Authorization: `Bearer ${this.token}` };
-            // axios
-            //     .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}`, { headers: headers })
-            //     .then(response => {
-            //         const updated_summary = response.data.updated_summary;
-            //         this.summary.automated_narrative_summary = updated_summary;
-            //         const dmp = new DiffMatchPatch();
-            //         const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
-            //         this.sliderValue.range = this.sliderValue.range + 1;
-            //         var ds = dmp.diff_prettyHtml(diff);
-            //         document.getElementById('outputdiv').innerHTML = ds;
-            //     }).catch(error => {
-            //         console.log(error); // error
-            //     });
+            const headers = { Authorization: `Bearer ${this.token}` };
+            axios
+                .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}`, { headers: headers })
+                .then(response => {
+                    const updated_summary = response.data.updated_summary;
+                    this.summary.automated_narrative_summary = updated_summary;
+                    const dmp = new DiffMatchPatch();
+                    const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
+                    this.sliderValue.range = this.sliderValue.range + 1;
+                    var ds = dmp.diff_prettyHtml(diff);
+                    document.getElementById('outputdiv').innerHTML = ds;
+                }).catch(error => {
+                    console.log(error); // error
+                }).then(() => {
+                    // always executed
+                    this.isLoading = false;
+                });
         },
     },
     created() {
