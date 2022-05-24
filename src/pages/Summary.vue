@@ -24,11 +24,12 @@
                 <FormulateForm
                     v-model="sliderValue"
                     @submit="updateSummaryByDiff"
+                    :form-errors="formErrors"
                 >
                     <FormulateInput
                         label="How many edits would you like the updated conclusion to have?"
                         type="range"
-                        name="range"
+                        name="number_edits"
                         min="1"
                         max="10"
                         value="1"
@@ -36,10 +37,11 @@
                         error-behavior="live"
                         :show-value="true"
                     />
+                    <FormulateErrors />
                     <FormulateInput
                         type="submit"
                         :label="isLoading ? 'Loading...' : 'Update'"
-                        :disabled="isLoading"
+                        :disabled="isLoading || this.token == null"
                     />
                 </FormulateForm>
             </div>
@@ -61,6 +63,7 @@ export default {
     },
     data() {
         return {
+            formErrors: [],
             summary: {
                 bakground: null,
                 methods: null,
@@ -118,11 +121,12 @@ export default {
                     this.summary.automated_narrative_summary = updated_summary;
                     const dmp = new DiffMatchPatch();
                     const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
-                    this.sliderValue.range = this.sliderValue.range + 1;
+                    // this.sliderValue.range = this.sliderValue.range + 1;
                     var ds = dmp.diff_prettyHtml(diff);
                     document.getElementById('outputdiv').innerHTML = ds;
                 }).catch(error => {
                     console.log(error); // error
+                    this.formErrors = ['Sorry, an unexpected error occurred. Please try again soon..']
                 }).then(() => {
                     // always executed
                     this.isLoading = false;
