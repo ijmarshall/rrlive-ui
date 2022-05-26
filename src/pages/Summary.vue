@@ -88,6 +88,7 @@ export default {
             axios
                 .get(`${settings.url}/api/get_live_review_summary/${this.$route.params.revid}`, { headers: headers })
                 .then(response => {
+                    console.log(response.data)
                     this.summary = response.data;
                     const dmp = new DiffMatchPatch();
                     const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
