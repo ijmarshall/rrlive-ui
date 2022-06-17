@@ -116,13 +116,9 @@ export default {
         },
         updateSummaryByDiff() {
             this.isUpdateLoading = true;
-            // new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-            //     this.isLoading = false;
-            // });
-            // TODO: NEED TO FIGURE OUT HOW TO MAKE THIS WORK ONE AT A TIME
             const headers = { Authorization: `Bearer ${this.token}` };
             axios
-                .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}`, { headers: headers })
+                .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}?num_edits=${this.sliderValue.range - 1}`, { headers: headers })
                 .then(response => {
                     const updated_summary = response.data.updated_summary;
                     this.summary.automated_narrative_summary = updated_summary;
