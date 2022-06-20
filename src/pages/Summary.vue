@@ -20,6 +20,7 @@
 
             <strong>CONCLUSIONS</strong>
             <div class="mt-4 mb-4">
+                <p>Last updated: {{ summary.conclusion_last_update }}</p>
                 <FormulateForm @submit="updateConclusion" :form-errors="saveFormErrors">
                     <FormulateInput type="textarea" v-model="summary.conclusion"
                         label="Edit the conclusion based on suggestions below" validation="required" error-behavior="submit"/>
@@ -65,10 +66,11 @@ export default {
                 methods: null,
                 results: null,
                 conclusion: "",
+                conclusion_last_update: null,
                 automated_narrative_summary: "",
             }, // summary object with all different sections
             sliderValue: {
-                range: "1"
+                number_edits: "1"
             },
             isUpdateLoading: false,
             isSaveLoading: false
@@ -118,13 +120,13 @@ export default {
             this.isUpdateLoading = true;
             const headers = { Authorization: `Bearer ${this.token}` };
             axios
-                .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}?num_edits=${this.sliderValue.range - 1}`, { headers: headers })
+                .get(`${settings.url}/api/get_updated_summary/${this.$route.params.revid}?num_edits=${this.sliderValue.number_edits - 1}`, { headers: headers })
                 .then(response => {
                     const updated_summary = response.data.updated_summary;
                     this.summary.automated_narrative_summary = updated_summary;
                     const dmp = new DiffMatchPatch();
                     const diff = dmp.diff_main(this.summary.conclusion, this.summary.automated_narrative_summary);
-                    // this.sliderValue.range = this.sliderValue.range + 1;
+                    this.sliderValue.number_edits = diff.length
                     var ds = dmp.diff_prettyHtml(diff);
                     document.getElementById('outputdiv').innerHTML = ds;
                 }).catch(error => {
