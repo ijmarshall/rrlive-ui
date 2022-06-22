@@ -186,7 +186,7 @@
     height: 1em;
     border-radius: 1em;
     border: 0;
-    background-color: #41b883;
+    background-color: #17a2b8;
     margin-top: calc(-.5em + 2px)
 }
 
@@ -198,7 +198,7 @@
     height: 1em;
     border-radius: 1em;
     border: 0;
-    background-color: #41b883;
+    background-color: #17a2b8;
     margin-top: calc(-.5em + 2px)
 }
 
@@ -209,7 +209,7 @@
     height: 1em;
     border-radius: 1em;
     border: 0;
-    background-color: #41b883;
+    background-color: #17a2b8;
     margin-top: calc(-.5em + 2px)
 }
 
@@ -250,7 +250,8 @@
     width: 100%;
     font-weight: 400;
     line-height: 1.2em;
-    margin: 0
+    margin: 0;
+    height: 8em;
 }
 
 .formulate-input[data-classification=textarea] textarea::-moz-placeholder {
